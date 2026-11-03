@@ -1,0 +1,56 @@
+{
+ "label": "rollout",
+ "adapters": [
+  "ckpt/distill-typed",
+  "ckpt/reward-dpo"
+ ],
+ "temperature": 3.8574255306969745,
+ "fit": {
+  "T=1": {
+   "n": 1500,
+   "acc": 0.842,
+   "nll": 0.792,
+   "ece": 0.1269
+  },
+  "T=3.857": {
+   "n": 1500,
+   "acc": 0.842,
+   "nll": 0.3563,
+   "ece": 0.034
+  }
+ },
+ "data/finetune/test/hangzhou*": {
+  "files": [
+   "hangzhou__anon_4_4_hangzhou_real_5816__eps0.1__s100.jsonl"
+  ],
+  "T=1": {
+   "n": 1500,
+   "acc": 0.784,
+   "nll": 1.3866,
+   "ece": 0.1818
+  },
+  "T=3.857": {
+   "n": 1500,
+   "acc": 0.784,
+   "nll": 0.5291,
+   "ece": 0.0693
+  }
+ },
+ "data/finetune/test/jinan*": {
+  "files": [
+   "jinan__anon_3_4_jinan_real_2500__eps0.1__s100.jsonl"
+  ],
+  "T=1": {
+   "n": 1400,
+   "acc": 0.8786,
+   "nll": 0.608,
+   "ece": 0.0939
+  },
+  "T=3.857": {
+   "n": 1400,
+   "acc": 0.8786,
+   "nll": 0.2959,
+   "ece": 0.0188
+  }
+ }
+}

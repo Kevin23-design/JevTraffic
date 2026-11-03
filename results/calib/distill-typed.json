@@ -1,0 +1,55 @@
+{
+ "label": "mp",
+ "adapters": [
+  "ckpt/distill-typed"
+ ],
+ "temperature": 0.951229424500714,
+ "fit": {
+  "T=1": {
+   "n": 1500,
+   "acc": 0.9087,
+   "nll": 0.2308,
+   "ece": 0.0109
+  },
+  "T=0.951": {
+   "n": 1500,
+   "acc": 0.9087,
+   "nll": 0.2308,
+   "ece": 0.0123
+  }
+ },
+ "data/finetune/test/hangzhou*": {
+  "files": [
+   "hangzhou__anon_4_4_hangzhou_real_5816__eps0.1__s100.jsonl"
+  ],
+  "T=1": {
+   "n": 1500,
+   "acc": 0.908,
+   "nll": 0.3009,
+   "ece": 0.025
+  },
+  "T=0.951": {
+   "n": 1500,
+   "acc": 0.908,
+   "nll": 0.3046,
+   "ece": 0.0238
+  }
+ },
+ "data/finetune/test/jinan*": {
+  "files": [
+   "jinan__anon_3_4_jinan_real_2500__eps0.1__s100.jsonl"
+  ],
+  "T=1": {
+   "n": 1400,
+   "acc": 0.8914,
+   "nll": 0.2728,
+   "ece": 0.0205
+  },
+  "T=0.951": {
+   "n": 1400,
+   "acc": 0.8914,
+   "nll": 0.2747,
+   "ece": 0.0248
+  }
+ }
+}

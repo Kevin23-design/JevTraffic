@@ -1,0 +1,131 @@
+dataset,traffic,controller,seeds,ATT,AWT,AQL,ms_per_decision
+hangzhou,anon_4_4_hangzhou_real,fixedtime,3,497.00,37.30,203.72,
+hangzhou,anon_4_4_hangzhou_real,random,3,607.84,93.14,285.29,
+hangzhou,anon_4_4_hangzhou_real,maxqueue,3,312.60,42.04,58.85,
+hangzhou,anon_4_4_hangzhou_real,maxpressure,3,317.01,42.47,62.56,
+hangzhou,anon_4_4_hangzhou_real,rollout-greedy,1,308.15,69.19,55.40,
+hangzhou,anon_4_4_hangzhou_real,jev-raw [Qwen2.5-0.5B-Instruct],1,948.38,682.99,637.75,98.64112163583438
+hangzhou,anon_4_4_hangzhou_real,jev-raw [Qwen2.5-7B-Instruct],1,747.31,594.46,457.59,619.7796277701855
+hangzhou,anon_4_4_hangzhou_real,jev-raw-gate0.6 [Qwen2.5-0.5B-Instruct],1,317.01,42.47,62.56,86.71080805361271
+hangzhou,anon_4_4_hangzhou_real,jev-raw-gate0.6 [Qwen2.5-7B-Instruct],1,634.53,535.50,354.46,631.0732613007227
+hangzhou,anon_4_4_hangzhou_real,jev-score-raw [Qwen2.5-7B-Instruct],1,784.86,644.63,420.69,1905.4240829000871
+hangzhou,anon_4_4_hangzhou_real,jev-score-typed [Qwen2.5-7B-Instruct],1,574.54,107.49,265.48,190.29154367744923
+hangzhou,anon_4_4_hangzhou_real,jev-typed T=0.52 [Qwen2.5-7B-Instruct+distill-typed+reward-soft],1,316.91,58.40,63.14,55.3094873825709
+hangzhou,anon_4_4_hangzhou_real,jev-typed T=0.95 [Qwen2.5-7B-Instruct+distill-typed],1,313.10,39.53,58.14,55.713207398851715
+hangzhou,anon_4_4_hangzhou_real,jev-typed T=3.86 [Qwen2.5-7B-Instruct+distill-typed+reward-dpo],1,313.76,45.28,59.88,55.090551575024925
+hangzhou,anon_4_4_hangzhou_real,jev-typed [Qwen2.5-0.5B-Instruct],1,1124.84,880.78,798.44,10.231557860970497
+hangzhou,anon_4_4_hangzhou_real,jev-typed [Qwen2.5-7B-Instruct],1,1061.58,776.20,636.22,55.287957812349
+hangzhou,anon_4_4_hangzhou_real,jev-typed-gate0.6 T=0.52 [Qwen2.5-7B-Instruct+distill-typed+reward-soft],1,317.50,54.18,63.12,58.83053243160248
+hangzhou,anon_4_4_hangzhou_real,jev-typed-gate0.6 T=0.95 [Qwen2.5-7B-Instruct+distill-typed],1,313.75,40.83,59.18,55.69565606613954
+hangzhou,anon_4_4_hangzhou_real,jev-typed-gate0.6 T=3.86 [Qwen2.5-7B-Instruct+distill-typed+reward-dpo],1,311.88,43.82,58.47,55.496749902764954
+hangzhou,anon_4_4_hangzhou_real,jev-typed-gate0.6 [Qwen2.5-0.5B-Instruct],1,317.01,42.47,62.56,7.663010184963544
+hangzhou,anon_4_4_hangzhou_real,jev-typed-gate0.6 [Qwen2.5-7B-Instruct],1,934.65,843.76,551.98,55.373916402459145
+hangzhou,anon_4_4_hangzhou_real,jev-typed-perm2 [Qwen2.5-0.5B-Instruct],1,1286.44,1006.12,745.04,14.977765083312988
+hangzhou,anon_4_4_hangzhou_real,jev-typed-perm2 [Qwen2.5-7B-Instruct],1,1135.62,867.14,656.40,109.46741451819737
+hangzhou,anon_4_4_hangzhou_real,jev-typed-perm4 [Qwen2.5-7B-Instruct],1,1195.93,932.92,676.37,214.9609487503767
+hangzhou,anon_4_4_hangzhou_real,llm-gen [Qwen2.5-0.5B-Instruct],1,1064.49,754.77,729.70,699.4083513816198
+hangzhou,anon_4_4_hangzhou_real,llm-gen [Qwen2.5-7B-Instruct],1,322.76,38.36,66.32,1937.0464002092679
+hangzhou,anon_4_4_hangzhou_real_5816,fixedtime,3,408.66,37.17,303.45,
+hangzhou,anon_4_4_hangzhou_real_5816,random,3,490.35,91.61,426.34,
+hangzhou,anon_4_4_hangzhou_real_5816,maxqueue,3,331.31,57.15,185.18,
+hangzhou,anon_4_4_hangzhou_real_5816,maxpressure,3,335.08,57.24,191.73,
+hangzhou,anon_4_4_hangzhou_real_5816,rollout-greedy,1,327.45,139.32,187.61,
+hangzhou,anon_4_4_hangzhou_real_5816,jev-raw [Qwen2.5-0.5B-Instruct],1,623.15,528.22,785.02,109.84992869198322
+hangzhou,anon_4_4_hangzhou_real_5816,jev-raw [Qwen2.5-7B-Instruct],1,587.67,478.43,693.88,636.9181929777066
+hangzhou,anon_4_4_hangzhou_real_5816,jev-raw-gate0.6 [Qwen2.5-0.5B-Instruct],1,335.08,57.24,191.72,93.3612298220396
+hangzhou,anon_4_4_hangzhou_real_5816,jev-raw-gate0.6 [Qwen2.5-7B-Instruct],1,490.18,336.36,511.57,644.8488548398018
+hangzhou,anon_4_4_hangzhou_real_5816,jev-score-raw [Qwen2.5-7B-Instruct],1,614.43,345.05,610.11,2028.276424234112
+hangzhou,anon_4_4_hangzhou_real_5816,jev-score-typed [Qwen2.5-7B-Instruct],1,464.19,96.69,394.93,191.85572117567062
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed T=0.52 [Qwen2.5-7B-Instruct+distill-typed+reward-soft],1,333.61,98.18,195.57,59.12358947098255
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed T=0.95 [Qwen2.5-7B-Instruct+distill-typed],1,333.09,53.60,186.36,56.08456817766031
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed T=3.86 [Qwen2.5-7B-Instruct+distill-typed+reward-dpo],1,333.67,70.64,193.67,56.08153616388639
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed [Qwen2.5-0.5B-Instruct],1,742.99,732.66,950.44,7.693999757369359
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed [Qwen2.5-7B-Instruct],1,740.63,697.24,737.97,55.222019677360855
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed-gate0.6 T=0.52 [Qwen2.5-7B-Instruct+distill-typed+reward-soft],1,333.19,89.76,194.55,55.65170099337896
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed-gate0.6 T=0.95 [Qwen2.5-7B-Instruct+distill-typed],1,332.11,55.98,186.41,55.841690922776856
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed-gate0.6 T=3.86 [Qwen2.5-7B-Instruct+distill-typed+reward-dpo],1,331.18,61.57,187.24,55.526878560582794
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed-gate0.6 [Qwen2.5-0.5B-Instruct],1,335.08,57.24,191.73,7.65682781736056
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed-gate0.6 [Qwen2.5-7B-Instruct],1,753.87,716.99,749.98,55.07499451438586
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed-perm2 [Qwen2.5-0.5B-Instruct],1,925.16,824.81,927.34,14.845159774025282
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed-perm2 [Qwen2.5-7B-Instruct],1,758.46,758.55,745.98,109.4439974675576
+hangzhou,anon_4_4_hangzhou_real_5816,jev-typed-perm4 [Qwen2.5-7B-Instruct],1,782.88,814.26,763.07,214.31333969036737
+hangzhou,anon_4_4_hangzhou_real_5816,llm-gen [Qwen2.5-0.5B-Instruct],1,703.31,559.54,872.02,700.6580406179031
+hangzhou,anon_4_4_hangzhou_real_5816,llm-gen [Qwen2.5-7B-Instruct],1,341.44,51.32,198.12,1825.87145815293
+jinan,anon_3_4_jinan_real,fixedtime,3,434.80,42.81,418.90,
+jinan,anon_3_4_jinan_real,random,3,556.16,101.99,605.51,
+jinan,anon_3_4_jinan_real,maxqueue,3,274.90,43.20,159.95,
+jinan,anon_3_4_jinan_real,maxpressure,3,275.95,43.80,162.88,
+jinan,anon_3_4_jinan_real,rollout-greedy,1,272.45,57.92,157.68,
+jinan,anon_3_4_jinan_real,jev-raw [Qwen2.5-0.5B-Instruct],1,1235.69,851.07,1699.80,105.78164988093906
+jinan,anon_3_4_jinan_real,jev-raw [Qwen2.5-7B-Instruct],1,759.99,500.88,1026.20,673.5933775703112
+jinan,anon_3_4_jinan_real,jev-raw-gate0.6 [Qwen2.5-0.5B-Instruct],1,275.95,43.80,162.88,102.92938699324925
+jinan,anon_3_4_jinan_real,jev-raw-gate0.6 [Qwen2.5-7B-Instruct],1,489.36,216.74,533.12,685.6011198626625
+jinan,anon_3_4_jinan_real,jev-score-raw [Qwen2.5-7B-Instruct],1,963.92,417.90,1200.79,2230.8875231279267
+jinan,anon_3_4_jinan_real,jev-score-typed [Qwen2.5-7B-Instruct],1,468.69,74.52,456.71,196.71169883675046
+jinan,anon_3_4_jinan_real,jev-typed T=0.52 [Qwen2.5-7B-Instruct+distill-typed+reward-soft],1,274.62,58.09,161.44,57.56049652894338
+jinan,anon_3_4_jinan_real,jev-typed T=0.95 [Qwen2.5-7B-Instruct+distill-typed],1,274.86,43.27,160.54,57.849590645896065
+jinan,anon_3_4_jinan_real,jev-typed T=3.86 [Qwen2.5-7B-Instruct+distill-typed+reward-dpo],1,273.93,47.72,159.52,57.38919989930259
+jinan,anon_3_4_jinan_real,jev-typed [Qwen2.5-0.5B-Instruct],1,1303.73,959.04,1772.58,8.639651868078444
+jinan,anon_3_4_jinan_real,jev-typed [Qwen2.5-7B-Instruct],1,1135.39,923.83,1444.77,56.8824988272455
+jinan,anon_3_4_jinan_real,jev-typed-gate0.6 T=0.52 [Qwen2.5-7B-Instruct+distill-typed+reward-soft],1,275.72,52.06,163.08,61.66567305723826
+jinan,anon_3_4_jinan_real,jev-typed-gate0.6 T=0.95 [Qwen2.5-7B-Instruct+distill-typed],1,276.37,43.06,162.70,57.85726126697328
+jinan,anon_3_4_jinan_real,jev-typed-gate0.6 T=3.86 [Qwen2.5-7B-Instruct+distill-typed+reward-dpo],1,275.23,46.54,161.63,57.984653777546356
+jinan,anon_3_4_jinan_real,jev-typed-gate0.6 [Qwen2.5-0.5B-Instruct],1,275.95,43.80,162.88,8.552125096321106
+jinan,anon_3_4_jinan_real,jev-typed-gate0.6 [Qwen2.5-7B-Instruct],1,1141.74,939.16,1456.06,56.853243708610535
+jinan,anon_3_4_jinan_real,jev-typed-perm2 [Qwen2.5-0.5B-Instruct],1,1142.33,943.33,1446.12,16.144651340113747
+jinan,anon_3_4_jinan_real,jev-typed-perm2 [Qwen2.5-7B-Instruct],1,1241.64,881.26,1568.62,111.60870757367876
+jinan,anon_3_4_jinan_real,jev-typed-perm4 [Qwen2.5-7B-Instruct],1,1159.77,940.68,1467.04,218.37149113416672
+jinan,anon_3_4_jinan_real,llm-gen [Qwen2.5-0.5B-Instruct],1,1189.19,681.00,1673.19,914.5691666338179
+jinan,anon_3_4_jinan_real,llm-gen [Qwen2.5-7B-Instruct],1,289.34,43.89,181.83,2110.2413983808624
+jinan,anon_3_4_jinan_real_2000,fixedtime,3,369.65,35.97,214.22,
+jinan,anon_3_4_jinan_real_2000,random,3,531.15,95.45,396.66,
+jinan,anon_3_4_jinan_real_2000,maxqueue,3,266.86,40.31,101.28,
+jinan,anon_3_4_jinan_real_2000,maxpressure,3,267.94,37.07,102.36,
+jinan,anon_3_4_jinan_real_2000,rollout-greedy,1,268.35,53.33,102.15,
+jinan,anon_3_4_jinan_real_2000,jev-raw [Qwen2.5-0.5B-Instruct],1,1189.60,713.17,1276.17,106.7473785744773
+jinan,anon_3_4_jinan_real_2000,jev-raw [Qwen2.5-7B-Instruct],1,721.95,504.32,681.73,656.4506529106034
+jinan,anon_3_4_jinan_real_2000,jev-raw-gate0.6 [Qwen2.5-0.5B-Instruct],1,267.94,37.07,102.36,95.56899981366263
+jinan,anon_3_4_jinan_real_2000,jev-raw-gate0.6 [Qwen2.5-7B-Instruct],1,450.16,197.92,316.07,653.785058359305
+jinan,anon_3_4_jinan_real_2000,jev-score-raw [Qwen2.5-7B-Instruct],1,796.37,337.88,691.95,2180.4589205318025
+jinan,anon_3_4_jinan_real_2000,jev-score-typed [Qwen2.5-7B-Instruct],1,409.61,72.33,253.37,195.71785496340857
+jinan,anon_3_4_jinan_real_2000,jev-typed T=0.52 [Qwen2.5-7B-Instruct+distill-typed+reward-soft],1,271.03,51.21,105.24,61.36639134751426
+jinan,anon_3_4_jinan_real_2000,jev-typed T=0.95 [Qwen2.5-7B-Instruct+distill-typed],1,268.83,40.17,103.25,57.83960239754783
+jinan,anon_3_4_jinan_real_2000,jev-typed T=3.86 [Qwen2.5-7B-Instruct+distill-typed+reward-dpo],1,267.66,42.21,101.96,57.89704422156016
+jinan,anon_3_4_jinan_real_2000,jev-typed [Qwen2.5-0.5B-Instruct],1,1382.27,948.11,1485.13,8.677843378649818
+jinan,anon_3_4_jinan_real_2000,jev-typed [Qwen2.5-7B-Instruct],1,1300.13,987.18,1185.75,56.78645239935981
+jinan,anon_3_4_jinan_real_2000,jev-typed-gate0.6 T=0.52 [Qwen2.5-7B-Instruct+distill-typed+reward-soft],1,268.40,47.22,102.01,57.4718231956164
+jinan,anon_3_4_jinan_real_2000,jev-typed-gate0.6 T=0.95 [Qwen2.5-7B-Instruct+distill-typed],1,268.58,37.51,101.67,58.16540320714315
+jinan,anon_3_4_jinan_real_2000,jev-typed-gate0.6 T=3.86 [Qwen2.5-7B-Instruct+distill-typed+reward-dpo],1,266.57,41.03,99.55,57.56893224186368
+jinan,anon_3_4_jinan_real_2000,jev-typed-gate0.6 [Qwen2.5-0.5B-Instruct],1,267.94,37.07,102.36,8.640319108963013
+jinan,anon_3_4_jinan_real_2000,jev-typed-gate0.6 [Qwen2.5-7B-Instruct],1,1301.22,986.60,1186.97,56.988039116064705
+jinan,anon_3_4_jinan_real_2000,jev-typed-perm2 [Qwen2.5-0.5B-Instruct],1,1294.12,971.30,1198.20,16.012442939811283
+jinan,anon_3_4_jinan_real_2000,jev-typed-perm2 [Qwen2.5-7B-Instruct],1,1298.20,972.90,1188.52,114.71918986903296
+jinan,anon_3_4_jinan_real_2000,jev-typed-perm4 [Qwen2.5-7B-Instruct],1,1308.43,996.79,1191.99,217.25161009364658
+jinan,anon_3_4_jinan_real_2000,llm-gen [Qwen2.5-0.5B-Instruct],1,1231.96,732.42,1328.38,911.5282615025839
+jinan,anon_3_4_jinan_real_2000,llm-gen [Qwen2.5-7B-Instruct],1,280.26,40.83,114.20,2049.15362149477
+jinan,anon_3_4_jinan_real_2500,fixedtime,3,384.56,37.49,297.90,
+jinan,anon_3_4_jinan_real_2500,random,3,527.62,104.23,496.55,
+jinan,anon_3_4_jinan_real_2500,maxqueue,3,261.22,41.78,128.32,
+jinan,anon_3_4_jinan_real_2500,maxpressure,3,260.96,39.25,128.18,
+jinan,anon_3_4_jinan_real_2500,rollout-greedy,1,261.60,54.61,128.95,
+jinan,anon_3_4_jinan_real_2500,jev-raw [Qwen2.5-0.5B-Instruct],1,1103.77,718.85,1444.03,103.63876306348376
+jinan,anon_3_4_jinan_real_2500,jev-raw [Qwen2.5-7B-Instruct],1,727.89,566.39,857.30,701.8469128343794
+jinan,anon_3_4_jinan_real_2500,jev-raw-gate0.6 [Qwen2.5-0.5B-Instruct],1,260.96,39.25,128.18,104.91651048262914
+jinan,anon_3_4_jinan_real_2500,jev-raw-gate0.6 [Qwen2.5-7B-Instruct],1,427.11,189.27,374.15,707.7123395270771
+jinan,anon_3_4_jinan_real_2500,jev-score-raw [Qwen2.5-7B-Instruct],1,703.27,242.98,737.53,2238.140594296985
+jinan,anon_3_4_jinan_real_2500,jev-score-typed [Qwen2.5-7B-Instruct],1,444.86,68.83,380.04,196.31227138969632
+jinan,anon_3_4_jinan_real_2500,jev-typed T=0.52 [Qwen2.5-7B-Instruct+distill-typed+reward-soft],1,263.17,51.58,132.23,57.4966601199574
+jinan,anon_3_4_jinan_real_2500,jev-typed T=0.95 [Qwen2.5-7B-Instruct+distill-typed],1,262.54,41.12,129.72,58.27787038352754
+jinan,anon_3_4_jinan_real_2500,jev-typed T=3.86 [Qwen2.5-7B-Instruct+distill-typed+reward-dpo],1,263.17,44.86,131.18,57.426760759618546
+jinan,anon_3_4_jinan_real_2500,jev-typed [Qwen2.5-0.5B-Instruct],1,1265.98,933.79,1597.51,8.930332627561357
+jinan,anon_3_4_jinan_real_2500,jev-typed [Qwen2.5-7B-Instruct],1,1154.89,940.27,1261.02,59.721521536509194
+jinan,anon_3_4_jinan_real_2500,jev-typed-gate0.6 T=0.52 [Qwen2.5-7B-Instruct+distill-typed+reward-soft],1,261.90,48.43,129.64,61.4399833811654
+jinan,anon_3_4_jinan_real_2500,jev-typed-gate0.6 T=0.95 [Qwen2.5-7B-Instruct+distill-typed],1,259.16,40.13,125.02,58.04691811402639
+jinan,anon_3_4_jinan_real_2500,jev-typed-gate0.6 T=3.86 [Qwen2.5-7B-Instruct+distill-typed+reward-dpo],1,262.49,44.21,130.60,58.02457084258398
+jinan,anon_3_4_jinan_real_2500,jev-typed-gate0.6 [Qwen2.5-0.5B-Instruct],1,260.96,39.25,128.18,8.884480595588684
+jinan,anon_3_4_jinan_real_2500,jev-typed-gate0.6 [Qwen2.5-7B-Instruct],1,1155.87,950.10,1256.17,60.04063139359156
+jinan,anon_3_4_jinan_real_2500,jev-typed-perm2 [Qwen2.5-0.5B-Instruct],1,1179.76,964.05,1283.48,16.71609315607283
+jinan,anon_3_4_jinan_real_2500,jev-typed-perm2 [Qwen2.5-7B-Instruct],1,1175.03,959.30,1271.27,107.93694059054057
+jinan,anon_3_4_jinan_real_2500,jev-typed-perm4 [Qwen2.5-7B-Instruct],1,1175.88,965.60,1271.93,218.19630099667444
+jinan,anon_3_4_jinan_real_2500,llm-gen [Qwen2.5-0.5B-Instruct],1,1174.84,692.03,1496.46,926.8933264745606
+jinan,anon_3_4_jinan_real_2500,llm-gen [Qwen2.5-7B-Instruct],1,275.48,45.53,146.32,2068.7980314095817

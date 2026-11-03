@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+third_party/
+data/
+records/
+logs/
+results/runs/
+ckpt/
+results/smoke/
