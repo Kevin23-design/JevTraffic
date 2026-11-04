@@ -11,6 +11,12 @@ if [ ! -x .venv/bin/python ]; then
   "$BASE_PY" -m venv --system-site-packages .venv
 fi
 .venv/bin/python -c "import cityflow" 2>/dev/null || LDFLAGS="-static-libstdc++ -static-libgcc" .venv/bin/pip install -q ./third_party/USTBench/CityFlow  # conda libstdc++ is older than the system g++
+# SUMO stack for the SingleTSCBaselines (v2) experiments; tshub is not on PyPI, so install the synced source
+.venv/bin/python -c "import libsumo, tshub" 2>/dev/null || {
+  .venv/bin/pip install -q eclipse-sumo libsumo traci sumolib loguru scienceplots gymnasium pandas
+  .venv/bin/pip install -q --no-deps -e ./third_party/TransSimHub
+}
+.venv/bin/python -c "import libsumo, tshub; print('libsumo + tshub ok')"
 .venv/bin/python -c "import cityflow, torch, transformers, vllm; print('cityflow ok | torch', torch.__version__, '| transformers', transformers.__version__, '| vllm', vllm.__version__)"
 
 mkdir -p "$MODELS"

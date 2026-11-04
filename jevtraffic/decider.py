@@ -175,7 +175,8 @@ class TypedDecider:
 
     def __init__(self, model_path: str, device: str = "cuda", dtype: str = "bfloat16", batch_size: int = 16,
                  temperature: float = 1.0, permutations: int = 1, system_prompt: str | None = None,
-                 instruction: str = DEFAULT_INSTRUCTION, adapters: Sequence[str] = ()):
+                 instruction: str = DEFAULT_INSTRUCTION, adapters: Sequence[str] = (), prefix_cache: bool = False,
+                 compile: bool = False):
         import torch
 
         self.torch = torch
@@ -184,12 +185,22 @@ class TypedDecider:
         self.device = self.model.device
         self.batch_size = batch_size
         self.temperature = temperature
+        self.temperatures: dict[str, float] = {}  # per question name (e.g. phase / situation), overrides `temperature`
         self.permutations = permutations
         self.system_prompt = system_prompt
         self.instruction = instruction
         self.label_ids = self._label_ids(LETTERS)
         self.digit_ids = self._label_ids("0123456789")
-        self.stats = {"calls": 0, "sequences": 0, "prompt_tokens": 0, "seconds": 0.0}
+        self.stats = {"calls": 0, "sequences": 0, "prompt_tokens": 0, "seconds": 0.0, "cached_tokens": 0}
+        # Every prompt starts with the same chat header + system prompt + instruction; with prefix_cache its KV
+        # cache is computed once and reused, so only the state + question are run per decision.
+        self.prefix_cache = prefix_cache
+        self._prefix_ids: list[int] | None = None
+        self._prefix_kv = None
+        # compile: CUDA graphs (torch.compile "reduce-overhead") over fixed (batch, length) buckets. At batch 1 an
+        # eager forward of a small model is bound by per-layer kernel launches, not FLOPs; graphs remove that.
+        self.compile = compile
+        self._compiled = None
 
     def _label_ids(self, labels: str) -> list[int]:
         return single_token_ids(self.tokenizer, labels)
@@ -197,12 +208,64 @@ class TypedDecider:
     def _prompt(self, state: str, choice: Choice | Score) -> str:
         return build_prompt(self.tokenizer, state, choice, self.system_prompt, self.instruction)
 
+    def _prefix(self):
+        """Token ids and KV cache (legacy tuple, batch 1) of the prompt text before the state."""
+        if self._prefix_ids is None:
+            mark = "\u2063STATE\u2063"
+            full = self._prompt(mark, Choice("q", ["a", "b"]))
+            self._prefix_ids = self.tokenizer(full[:full.index(mark)], add_special_tokens=False)["input_ids"]
+            ids = self.torch.tensor([self._prefix_ids], device=self.device)
+            with self.torch.inference_mode():
+                kv = self.model(input_ids=ids, use_cache=True).past_key_values
+            self._prefix_kv = kv.to_legacy_cache() if hasattr(kv, "to_legacy_cache") else kv
+        return self._prefix_ids, self._prefix_kv
+
+    def _score_cached(self, chunk: list[str], label_ids: list[int]):
+        """As _score for one chunk, but the shared prefix comes from the cache. Returns None if a prompt does not
+        tokenize to prefix + rest (then the caller falls back to the full prompt; results are identical)."""
+        torch = self.torch
+        from transformers import DynamicCache
+
+        prefix, kv = self._prefix()
+        ids = self.tokenizer(chunk, add_special_tokens=False)["input_ids"]
+        n = len(prefix)
+        if any(x[:n] != prefix for x in ids):
+            return None
+        rest = [x[n:] for x in ids]
+        width = max(len(r) for r in rest)
+        pad = self.tokenizer.pad_token_id
+        input_ids = torch.tensor([[pad] * (width - len(r)) + r for r in rest], device=self.device)
+        mask = torch.tensor([[0] * (width - len(r)) + [1] * len(r) for r in rest], device=self.device)
+        b = len(chunk)
+        attn = torch.cat([torch.ones(b, n, dtype=mask.dtype, device=self.device), mask], dim=1)
+        pos = n + (mask.cumsum(1) - 1).clamp_min(0)  # positions continue the prefix, skipping the left padding
+        cache = DynamicCache.from_legacy_cache(tuple((k.expand(b, -1, -1, -1), v.expand(b, -1, -1, -1))
+                                                     for k, v in kv))
+        with torch.inference_mode():
+            logits = self.model(input_ids=input_ids, attention_mask=attn, position_ids=pos, past_key_values=cache,
+                                use_cache=True, logits_to_keep=1).logits[:, -1, :]
+        self.stats["prompt_tokens"] += int(mask.sum())
+        self.stats["cached_tokens"] += n * b
+        return logits[:, label_ids].float().cpu().tolist()
+
     def _score(self, prompts: list[str], label_ids: list[int]) -> list[list[float]]:
         """Next-token logits restricted to `label_ids`, one row per prompt."""
         torch = self.torch
         out = []
         for i in range(0, len(prompts), self.batch_size):
             chunk = prompts[i:i + self.batch_size]
+            if self.prefix_cache:
+                rows = self._score_cached(chunk, label_ids)
+                if rows is not None:
+                    out.extend(rows)
+                    self.stats["sequences"] += len(chunk)
+                    continue
+            if self.compile:
+                logits = self._forward_compiled(chunk)
+                scores = logits[:, label_ids].float().cpu().tolist()
+                out.extend(scores)
+                self.stats["sequences"] += len(chunk)
+                continue
             enc = self.tokenizer(chunk, return_tensors="pt", padding=True, add_special_tokens=False).to(self.device)
             with torch.inference_mode():
                 # only the last position is read out; skip the full-sequence vocab projection
@@ -212,6 +275,26 @@ class TypedDecider:
             self.stats["sequences"] += len(chunk)
             self.stats["prompt_tokens"] += int(enc["attention_mask"].sum())
         return out
+
+    def _forward_compiled(self, chunk: list[str]):
+        """Last-position logits with the batch padded to 1/2/4/8/16/32.. rows and the length to a multiple of 64
+        (left padding, masked), so each bucket is captured once as a CUDA graph and replayed afterwards."""
+        torch = self.torch
+        if self._compiled is None:
+            def fwd(input_ids, attention_mask):
+                return self.model(input_ids=input_ids, attention_mask=attention_mask, logits_to_keep=1).logits[:, -1, :]
+            self._compiled = torch.compile(fwd, mode="reduce-overhead", dynamic=False)
+        ids = self.tokenizer(chunk, add_special_tokens=False)["input_ids"]
+        width = -(-max(len(x) for x in ids) // 64) * 64
+        rows = 1 << (len(ids) - 1).bit_length()
+        ids = ids + [ids[0]] * (rows - len(ids))  # filler rows, dropped below
+        pad = self.tokenizer.pad_token_id
+        input_ids = torch.tensor([[pad] * (width - len(x)) + x for x in ids], device=self.device)
+        mask = torch.tensor([[0] * (width - len(x)) + [1] * len(x) for x in ids], device=self.device)
+        with torch.inference_mode():
+            logits = self._compiled(input_ids, mask).clone()  # clone: graph outputs are overwritten on replay
+        self.stats["prompt_tokens"] += int(mask[:len(chunk)].sum())
+        return logits[:len(chunk)]
 
     def decide_items(self, items: Sequence[tuple[str, Choice | Score]]) -> list[Decision]:
         """Answer a batch of (state, question) pairs; all forward passes of the batch are scored together."""
@@ -236,7 +319,7 @@ class TypedDecider:
         count = [0] * len(items)
         first_raw: list[list[float]] = [[] for _ in items]
         for (i, order, _, _), raw in zip(jobs, rows):
-            probs = softmax(raw, self.temperature)
+            probs = softmax(raw, self.temperatures.get(items[i][1].name, self.temperature))
             for pos, orig in enumerate(order if order is not None else range(len(probs))):
                 acc[i][orig] += probs[pos]
             count[i] += 1

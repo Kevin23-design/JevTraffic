@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Evaluate fine-tuned adapters online on all traffic files (train files + held-out hangzhou_5816 / jinan_2500).
-#   ADAPTERS="ckpt/distill-typed" GPUS="4 6" bash scripts/run_finetuned.sh
+#   ADAPTERS="ckpt/distill-typed" GPUS="6 7" bash scripts/run_finetuned.sh
 #   ADAPTERS="ckpt/distill-typed ckpt/reward-soft" ...        (stage-2 adapter on top of stage 1)
 # The calibrated temperature in <last adapter>/calib.json is used automatically when present.
 set -uo pipefail
 cd "$(dirname "$0")/.."
 MODEL=${MODEL:-$HOME/zzy/hf_models/Qwen2.5-7B-Instruct}
 ADAPTERS=${ADAPTERS:?set ADAPTERS}
-GPUS=(${GPUS:-0})
+GPUS=(${GPUS:-6 7})  # our allocation on the shared server: GPUs 6 and 7
 TAUS=${TAUS:-"0 0.6"}
 FILES=${FILES:-"hangzhou:anon_4_4_hangzhou_real.json hangzhou:anon_4_4_hangzhou_real_5816.json jinan:anon_3_4_jinan_real.json jinan:anon_3_4_jinan_real_2000.json jinan:anon_3_4_jinan_real_2500.json"}
 mkdir -p logs

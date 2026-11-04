@@ -2,11 +2,11 @@
 # LLM controllers (Jev-style typed decider variants + generative System-Two baseline) on every traffic file.
 # Jobs (models x variants x files) are spread round-robin over GPUS; each GPU runs its share sequentially,
 # one job at a time. Finished runs are skipped, failed ones retried once (the GPUs are shared with other users).
-#   MODELS="$HOME/zzy/hf_models/Qwen2.5-7B-Instruct" GPUS="0 1 2 3" bash scripts/run_llm.sh
+#   MODELS="$HOME/zzy/hf_models/Qwen2.5-7B-Instruct" GPUS="6 7" bash scripts/run_llm.sh
 set -uo pipefail
 cd "$(dirname "$0")/.."
 MODELS=${MODELS:-$HOME/zzy/hf_models/Qwen2.5-7B-Instruct}
-GPUS=(${GPUS:-0 1 2 3 4 5 6})
+GPUS=(${GPUS:-6 7})  # our allocation on the shared server: GPUs 6 and 7
 VARIANTS=${VARIANTS:-"jev-raw jev-typed jev-typed-perm2 jev-raw-gate jev-typed-gate llm-gen"}
 FILES=${FILES:-"hangzhou:anon_4_4_hangzhou_real.json hangzhou:anon_4_4_hangzhou_real_5816.json jinan:anon_3_4_jinan_real.json jinan:anon_3_4_jinan_real_2000.json jinan:anon_3_4_jinan_real_2500.json"}
 TAU=${TAU:-0.6}

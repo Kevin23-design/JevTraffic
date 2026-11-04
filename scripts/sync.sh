@@ -14,7 +14,9 @@ if [ "${1:-}" = "--pull" ]; then
 fi
 rsync -az --delete -e "ssh -p $PORT" \
   --exclude .git/ --exclude .venv/ --exclude __pycache__/ --exclude records/ --exclude results/ --exclude logs/ \
-  --exclude /ckpt/ --exclude /data/finetune/ \
-  --exclude 'third_party/USTBench/CityFlow/build/' \
+  --exclude /ckpt/ --exclude /data/finetune/ --exclude /data/sumo_finetune/ \
+  --exclude 'third_party/USTBench/CityFlow/build/' --exclude '*.egg-info/' \
+  --exclude /third_party/TransSimHub/docs/ --exclude /third_party/TransSimHub/examples/ \
+  --exclude /third_party/TransSimHub/benchmark/ --exclude /third_party/TransSimHub/assets/ \
   ./ "$REMOTE:$DIR/"
 echo "synced to $REMOTE:$DIR"

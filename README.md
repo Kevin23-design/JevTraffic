@@ -71,16 +71,16 @@ bash scripts/sync.sh                       # rsync to root@202.120.87.207:~/zzy/
 # on the server
 bash scripts/setup_server.sh               # venv on top of conda env vllm_qwen3_cu124, build CityFlow, download Qwen2.5-7B-Instruct via hf-mirror
 bash scripts/run_baselines.sh
-MODELS="$HOME/zzy/hf_models/Qwen2.5-7B-Instruct $HOME/zzy/hf_models/Qwen2.5-0.5B-Instruct" GPUS="0 1 2 3" bash scripts/run_llm.sh
+MODELS="$HOME/zzy/hf_models/Qwen2.5-7B-Instruct $HOME/zzy/hf_models/Qwen2.5-0.5B-Instruct" GPUS="6 7" bash scripts/run_llm.sh
 .venv/bin/python scripts/analyze.py        # -> results/summary.md
 # fine-tuning (train: hangzhou_real, jinan_real, jinan_2000; held out: hangzhou_5816, jinan_2500)
 bash scripts/collect_all.sh                # -> data/finetune/{train,val,test}/*.jsonl
-T=scripts/train_lora.py; R=".venv/bin/python -m torch.distributed.run --nproc_per_node 4"
+T=scripts/train_lora.py; R="env CUDA_VISIBLE_DEVICES=6,7 .venv/bin/python -m torch.distributed.run --nproc_per_node 2"
 $R $T --train "data/finetune/train/*.jsonl" --out ckpt/distill-typed --loss ce --batch_size 8 --epochs 0.5
 $R $T --train "data/finetune/train/*.jsonl" --init_adapter ckpt/distill-typed --out ckpt/reward-dpo --loss dpo --batch_size 8 --epochs 0.5 --lr 5e-5
 .venv/bin/python scripts/calibrate.py --adapters ckpt/distill-typed ckpt/reward-dpo --fit "data/finetune/val/*.jsonl" \
   --eval "data/finetune/test/hangzhou*" "data/finetune/test/jinan*" --label rollout   # writes calib.json (used automatically)
-ADAPTERS="ckpt/distill-typed ckpt/reward-dpo" GPUS="0 1 2 3" bash scripts/run_finetuned.sh
+ADAPTERS="ckpt/distill-typed ckpt/reward-dpo" GPUS="6 7" bash scripts/run_finetuned.sh
 # locally
 bash scripts/sync.sh --pull
 ```

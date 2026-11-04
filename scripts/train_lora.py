@@ -12,6 +12,12 @@ Losses
 For stage 2 pass --init_adapter <stage-1 adapter>: it is merged into the base, a fresh LoRA is trained on top,
 and (for dpo) the merged model with the new adapter disabled is the reference policy.
 
+Generic records (v2, scripts/sumo_collect.py) carry their own question: {"kind", "state", "question", "options",
+"label"} with 2..5 options; the softmax is restricted to each sample's own letters, and several kinds (phase +
+situation, or switch + situation) can be mixed in one run (multi-task). With --loss soft, records carrying "probs"
+(a teacher distribution in option order, e.g. UniTSA's keep/switch policy) are trained towards it; the others with
+ce. --state_field picks the rendered state (state / state_compact) when a record has several.
+
 Single GPU:   python scripts/train_lora.py --train data/finetune/train/*.jsonl --out ckpt/distill
 Multi GPU:    torchrun --nproc_per_node 4 scripts/train_lora.py ...
 """
@@ -37,13 +43,21 @@ from jevtraffic.env import PHASES  # noqa: E402
 from jevtraffic.prompts import PHASE_QUESTION, SYSTEM_PROMPT  # noqa: E402
 
 
-def load_records(patterns, state_key, loss, min_gap, keep_idle, seed):
+def load_records(patterns, state_key, loss, min_gap, keep_idle, seed, kinds=None, state_field="state"):
     rng = random.Random(seed)
     files = sorted({f for p in patterns for f in glob.glob(p)})
     recs, skipped_idle, skipped_gap = [], 0, 0
     for f in files:
         for line in open(f):
             r = json.loads(line)
+            if "options" in r:  # generic v2 record
+                if kinds is None or r["kind"] in kinds:
+                    rec = {k: r[k] for k in ("kind", "question", "options", "label")}
+                    rec["state"] = r.get(state_field, r["state"])
+                    if loss == "soft" and "probs" in r:
+                        rec["probs"] = r["probs"]
+                    recs.append(rec)
+                continue
             idle = max(r["queues"]) == 0 and max(r.get("rollout_costs") or [0]) == 0
             if idle and rng.random() > keep_idle:
                 skipped_idle += 1
@@ -67,6 +81,19 @@ def make_batch(tokenizer, recs, rng, loss, tau):
     """Prompts with a random option order per record, plus targets mapped into that order."""
     prompts, targets, pairs = [], [], []
     for r in recs:
+        if "options" in r:
+            order = list(range(len(r["options"])))
+            rng.shuffle(order)
+            q = Choice(r["question"], [r["options"][j] for j in order], r["kind"])
+            prompts.append(build_prompt(tokenizer, r["state"], q, SYSTEM_PROMPT))
+            if loss == "soft":  # distribution over the shown letters (one-hot for records without probs)
+                probs = r.get("probs") or [float(j == r["label"]) for j in range(len(r["options"]))]
+                t = torch.zeros(5)
+                t[:len(order)] = torch.tensor([probs[order[pos]] for pos in range(len(order))])
+                targets.append(t)
+            else:
+                targets.append(order.index(r["label"]))
+            continue
         order = list(range(len(PHASES)))
         rng.shuffle(order)  # order[pos] = phase shown at letter pos
         q = Choice(PHASE_QUESTION.question, [PHASE_QUESTION.options[j] for j in order], PHASE_QUESTION.name)
@@ -84,11 +111,15 @@ def make_batch(tokenizer, recs, rng, loss, tau):
     return prompts, targets, pairs
 
 
-def letter_logprobs(model, tokenizer, prompts, letter_ids, device, max_len):
+def letter_logprobs(model, tokenizer, prompts, letter_ids, device, max_len, n_options=None):
+    """Log-softmax over the option letters; with n_options, sample i only over its first n_options[i] letters."""
     enc = tokenizer(prompts, return_tensors="pt", padding=True, add_special_tokens=False,
                     truncation=True, max_length=max_len).to(device)
-    logits = model(**enc, logits_to_keep=1).logits[:, -1, :]
-    return F.log_softmax(logits[:, letter_ids].float(), dim=-1)
+    logits = model(**enc, logits_to_keep=1).logits[:, -1, :][:, letter_ids].float()
+    if n_options is not None:
+        mask = torch.arange(logits.shape[1], device=device)[None, :] >= torch.tensor(n_options, device=device)[:, None]
+        logits = logits.masked_fill(mask, float("-inf"))
+    return F.log_softmax(logits, dim=-1)
 
 
 def main():
@@ -113,6 +144,8 @@ def main():
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--log_every", type=int, default=20)
     p.add_argument("--save_every", type=int, default=200, help="optimizer steps between checkpoints (0 = only at end)")
+    p.add_argument("--kinds", nargs="*", default=None, help="generic records: keep only these kinds (default all)")
+    p.add_argument("--state_field", default="state", help="generic records: state / state_compact")
     args = p.parse_args()
 
     ddp = "LOCAL_RANK" in os.environ
@@ -137,17 +170,23 @@ def main():
         target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]))
     if main_proc:
         model.print_trainable_parameters()
-    letter_ids = single_token_ids(tokenizer, "ABCD")
-
-    files, recs, skipped = load_records(args.train, args.state_key, args.loss, args.min_gap, args.keep_idle, args.seed)
+    files, recs, skipped = load_records(args.train, args.state_key, args.loss, args.min_gap, args.keep_idle, args.seed,
+                                        args.kinds, args.state_field)
+    generic = bool(recs) and "options" in recs[0]
+    assert not generic or args.loss in ("ce", "soft"), "generic records are trained with --loss ce or soft"
+    letter_ids = single_token_ids(tokenizer, "ABCDE" if generic else "ABCD")
     rng = random.Random(args.seed)
     rng.shuffle(recs)
+    recs = recs[: len(recs) // world * world]  # equal shards: an extra batch on one rank deadlocks DDP at the end
     recs = recs[rank::world]  # shard
     steps_per_epoch = len(recs) // args.batch_size
     total_steps = max(1, int(steps_per_epoch * args.epochs) // args.grad_accum)
     if main_proc:
+        kinds = {}
+        for r in recs:
+            kinds[r.get("kind", "phase")] = kinds.get(r.get("kind", "phase"), 0) + 1
         print(json.dumps({"files": len(files), "records_per_rank": len(recs), "world": world, "skipped": skipped,
-                          "optimizer_steps": total_steps}), flush=True)
+                          "kinds_per_rank": kinds, "optimizer_steps": total_steps}), flush=True)
 
     params = [p_ for p_ in model.parameters() if p_.requires_grad]
     opt = torch.optim.AdamW(params, lr=args.lr, weight_decay=0.0)
@@ -167,14 +206,15 @@ def main():
                 break
             batch = recs[b * args.batch_size:(b + 1) * args.batch_size]
             prompts, targets, pairs = make_batch(tokenizer, batch, batch_rng, args.loss, args.tau)
-            logp = letter_logprobs(ddp_model, tokenizer, prompts, letter_ids, device, args.max_len)
+            n_opts = [len(r["options"]) for r in batch] if generic else None
+            logp = letter_logprobs(ddp_model, tokenizer, prompts, letter_ids, device, args.max_len, n_opts)
             if args.loss == "ce":
                 tgt = torch.tensor(targets, device=device)
                 loss = F.nll_loss(logp, tgt)
                 acc = (logp.argmax(-1) == tgt).float().mean().item()
             elif args.loss == "soft":
                 tgt = torch.stack(targets).to(device)
-                loss = -(tgt * logp).sum(-1).mean()
+                loss = -(tgt * logp.clamp_min(-1e4)).sum(-1).mean()  # masked letters are -inf with target 0
                 acc = (logp.argmax(-1) == tgt.argmax(-1)).float().mean().item()
             else:
                 with torch.no_grad(), model.disable_adapter():

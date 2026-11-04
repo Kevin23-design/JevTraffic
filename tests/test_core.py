@@ -59,7 +59,7 @@ class _FakeDecider(TypedDecider):
     Score questions get logits peaked at the digit encoded in the state."""
 
     def __init__(self, permutations):
-        self.temperature, self.permutations = 1.0, permutations
+        self.temperature, self.temperatures, self.permutations = 1.0, {}, permutations
         self.stats = {"calls": 0, "sequences": 0, "prompt_tokens": 0, "seconds": 0.0}
         self.label_ids, self.digit_ids = list(range(26)), list(range(100, 110))
 
