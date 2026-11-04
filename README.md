@@ -53,6 +53,22 @@ This reuses USTBench's `TrafficSignalEnvironment` (CityFlow, 30 s decision inter
 > In the original benchmark, an LLM answer of `ELWL` therefore activates N/S through and vice versa.
 > We use the roadnet order. This may partly explain the very high ATT numbers USTBench reports for LLMs (e.g. Qwen2.5-7B ATT 820 on Hangzhou).
 
+## v2 / v3: SUMO (SingleTSCBaselines)
+
+The second line runs on [SingleTSCBaselines](https://github.com/Traffic-Alpha/SingleTSCBaselines) (SUMO + TransSimHub):
+12 real junctions × easy/normal networks × 5 demand patterns, with France_Massy, SouthKorea_Songdo, Hongkong_YMT and
+the random_perturbation pattern held out.
+
+- **v2**: a MaxPressure-distilled 7B Jev choosing the next phase, a rule-based context agent with short-term memory
+  that asks Jev a situation question only when triggered, special-event detection (emergency vehicles via V2X, lane
+  blockages) with signal plans and notifications, and long-term memory with optional per-junction LoRA over simulated days.
+- **v3**: [UniTSA](https://ieeexplore.ieee.org/document/10400811) (PPO, movement-token Transformer, keep/switch actions) as
+  teacher and baseline, and small Jev students (Qwen2.5-0.5B/1.5B) distilled from its action probabilities. The
+  0.5B student ties UniTSA's travel time, cuts emergency-vehicle delay by about a third with the event plan, and
+  decides in 4.6 ms on GPU with CUDA graphs.
+
+Results: [results/RESULTS_v2_v3.md](results/RESULTS_v2_v3.md).
+
 ## Layout
 
 ```
@@ -60,6 +76,10 @@ jevtraffic/   env.py (USTBench env wrapper) · decider.py (Jev-style typed decid
 run_tsc.py    one episode: --agent {fixedtime,random,maxqueue,maxpressure,jev,llm-gen}
 scripts/      fetch_third_party.sh · sync.sh · setup_server.sh · run_baselines.sh · run_llm.sh · analyze.py
               collect_all.sh / collect_data.py (MP rollouts + counterfactual costs) · train_lora.py · calibrate.py · run_finetuned.sh
+jevtraffic/   sumo_env.py · sumo_prompts.py · sumo_agents.py · memory.py · events.py · longterm.py · days.py · unitsa.py   (v2/v3)
+run_sumo.py   one SUMO episode: --agent {fixtime,webster,sotl,maxpressure,mp,jev,unitsa}
+scripts/      sumo_collect*.py/sh · sumo_calibrate.py · run_sumo_*.sh · run_days*.{py,sh} · train_unitsa.py · train_unitsa_all.sh · run_unitsa_eval.sh
+              train_unitsa_students.sh · bench_decider.py · analyze_sumo.py
 results/      RESULTS.md (write-up) · summary.md / summary.csv (aggregated) · calib/*.json · runs/*.json (per-run, git-ignored)
 ```
 
@@ -83,6 +103,22 @@ $R $T --train "data/finetune/train/*.jsonl" --init_adapter ckpt/distill-typed --
 ADAPTERS="ckpt/distill-typed ckpt/reward-dpo" GPUS="6 7" bash scripts/run_finetuned.sh
 # locally
 bash scripts/sync.sh --pull
+```
+
+SUMO line (v2 / v3), on the server:
+
+```bash
+bash scripts/run_sumo_baselines.sh                              # E1: FixTime / Webster / SOTL / MaxPressure
+bash scripts/sumo_collect_all.sh                                # MP rollouts -> data/sumo_finetune
+ADAPTERS=ckpt/sumo-distill bash scripts/run_sumo_jev.sh e34     # E2-E4 with the 7B Jev
+bash scripts/run_days_all.sh                                    # E5: simulated days, off/daily/weekly/auto
+bash scripts/train_unitsa_all.sh                                # UniTSA universal / scratch / per-junction fine-tunes
+bash scripts/sumo_collect_unitsa_all.sh                         # teacher data -> data/sumo_unitsa
+bash scripts/train_unitsa_students.sh                           # 0.5B/1.5B students + calibration
+MODELS="universal" bash scripts/run_unitsa_eval.sh              # also MODELS="scratch ft" JUNCTIONS="..."
+MODEL=~/zzy/hf_models/Qwen2.5-0.5B-Instruct ADAPTERS=ckpt/unitsa-jev-0.5B-full \
+  EXTRA="--action_type next_or_not --teacher ckpt/unitsa/universal/model.zip" bash scripts/run_sumo_jev.sh v3
+.venv/bin/python scripts/analyze_sumo.py                        # -> results/sumo/summary.md
 ```
 
 ## Results

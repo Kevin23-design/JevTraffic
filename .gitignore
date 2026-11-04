@@ -8,3 +8,6 @@ logs/
 results/runs/
 ckpt/
 results/smoke/
+results/sumo/runs/
+results/sumo/events/
+.pytest_cache/

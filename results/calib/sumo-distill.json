@@ -1,0 +1,153 @@
+{
+ "adapters": [
+  "ckpt/sumo-distill"
+ ],
+ "phase": 1.0512710963760241,
+ "phase_report": {
+  "fit": {
+   "T=1": {
+    "n": 2000,
+    "acc": 0.8135,
+    "nll": 0.4286,
+    "ece": 0.0221
+   },
+   "T=1.051": {
+    "n": 2000,
+    "acc": 0.8135,
+    "nll": 0.428,
+    "ece": 0.0216
+   }
+  },
+  "data/sumo_finetune/test_pattern/*.jsonl": {
+   "files": 18,
+   "T=1": {
+    "n": 1311,
+    "acc": 0.8246,
+    "nll": 0.4305,
+    "ece": 0.0268
+   },
+   "T=1.051": {
+    "n": 1311,
+    "acc": 0.8246,
+    "nll": 0.4303,
+    "ece": 0.0223
+   }
+  },
+  "data/sumo_finetune/test_junction/*.jsonl": {
+   "files": 30,
+   "T=1": {
+    "n": 2000,
+    "acc": 0.7285,
+    "nll": 0.667,
+    "ece": 0.0652
+   },
+   "T=1.051": {
+    "n": 2000,
+    "acc": 0.7285,
+    "nll": 0.6585,
+    "ece": 0.0564
+   }
+  }
+ },
+ "situation": 0.9048374180359595,
+ "situation_report": {
+  "fit": {
+   "T=1": {
+    "n": 1338,
+    "acc": 0.9088,
+    "nll": 0.2033,
+    "ece": 0.0172
+   },
+   "T=0.905": {
+    "n": 1338,
+    "acc": 0.9088,
+    "nll": 0.2023,
+    "ece": 0.0155
+   }
+  },
+  "data/sumo_finetune/test_pattern/*.jsonl": {
+   "files": 18,
+   "T=1": {
+    "n": 346,
+    "acc": 0.9191,
+    "nll": 0.1911,
+    "ece": 0.0181
+   },
+   "T=0.905": {
+    "n": 346,
+    "acc": 0.9191,
+    "nll": 0.1896,
+    "ece": 0.0193
+   },
+   "per_class": {
+    "normal": {
+     "n": 163,
+     "precision": 0.909,
+     "recall": 0.92
+    },
+    "blockage": {
+     "n": 90,
+     "precision": 0.852,
+     "recall": 0.833
+    },
+    "ambulance": {
+     "n": 33,
+     "precision": 1.0,
+     "recall": 1.0
+    },
+    "police": {
+     "n": 38,
+     "precision": 1.0,
+     "recall": 1.0
+    },
+    "fire_engine": {
+     "n": 22,
+     "precision": 1.0,
+     "recall": 1.0
+    }
+   }
+  },
+  "data/sumo_finetune/test_junction/*.jsonl": {
+   "files": 30,
+   "T=1": {
+    "n": 816,
+    "acc": 0.864,
+    "nll": 0.3289,
+    "ece": 0.0618
+   },
+   "T=0.905": {
+    "n": 816,
+    "acc": 0.864,
+    "nll": 0.3452,
+    "ece": 0.0683
+   },
+   "per_class": {
+    "normal": {
+     "n": 207,
+     "precision": 0.779,
+     "recall": 0.647
+    },
+    "blockage": {
+     "n": 361,
+     "precision": 0.816,
+     "recall": 0.895
+    },
+    "ambulance": {
+     "n": 81,
+     "precision": 1.0,
+     "recall": 1.0
+    },
+    "police": {
+     "n": 89,
+     "precision": 1.0,
+     "recall": 1.0
+    },
+    "fire_engine": {
+     "n": 78,
+     "precision": 1.0,
+     "recall": 1.0
+    }
+   }
+  }
+ }
+}

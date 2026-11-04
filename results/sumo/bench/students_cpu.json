@@ -1,0 +1,26 @@
+[
+ {
+  "model": "Qwen2.5-0.5B-Instruct",
+  "params_M": 494.0,
+  "device": "cpu",
+  "format": "state_compact",
+  "mode": "plain",
+  "batch": 1,
+  "prompt_tokens": 229.8,
+  "prefix_tokens": 0,
+  "ms_per_decision": 229.08,
+  "max_prob_diff_vs_plain": 0.0
+ },
+ {
+  "model": "Qwen2.5-0.5B-Instruct",
+  "params_M": 494.0,
+  "device": "cpu",
+  "format": "state_compact",
+  "mode": "plain",
+  "batch": 8,
+  "prompt_tokens": 229.8,
+  "prefix_tokens": 0,
+  "ms_per_decision": 236.04,
+  "max_prob_diff_vs_plain": 0.0
+ }
+]
